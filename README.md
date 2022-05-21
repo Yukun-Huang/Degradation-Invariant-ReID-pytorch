@@ -17,9 +17,7 @@ Download the MLR-CUHK03 dataset and reorganize the folders as follows:<br>
 ```
 
 ## Model
-Trained model are provided. You may download it from [Google Drive](https://drive.google.com/drive/folders/1anHkFyEJaQWRsbkmVFjZX9y71zzb7rCs?usp=sharing).
-
-You may download it and move `outputs` folder to your project's root directory.
+Trained model are provided. You may download it from [Google Drive](https://drive.google.com/drive/folders/1anHkFyEJaQWRsbkmVFjZX9y71zzb7rCs?usp=sharing), then move the `outputs` folder to your project's root directory.
 
 ## Dependencies
 * Python 3.8
