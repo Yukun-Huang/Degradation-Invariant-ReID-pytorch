@@ -1,0 +1,31 @@
+###############################
+## training settings
+#---------------------
+max_epoch: 60
+batch_size: 32
+val_batch_size: 32
+test_batch_size: 64
+num_instance: 4
+
+###############################
+## print settings
+#---------------------
+log_iter: 200
+image_save_iter: 5000
+snapshot_save_epoch: 60
+
+
+###############################
+## optimizer
+#-----------------
+optim: adam
+lr_id: 0.00035
+
+scheduler:
+  lr_policy: step
+  step_size: 40
+
+TRANSFORM:
+  use_flip: True
+  use_crop: True
+  use_erase: True

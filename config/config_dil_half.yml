@@ -1,0 +1,24 @@
+###############################
+## training settings
+#---------------------
+max_iter: 15000
+batch_size: 8
+val_batch_size: 4
+test_batch_size: 8
+num_instance: 0
+
+
+###############################
+## print settings
+#---------------------
+log_iter: 200
+image_save_iter: 5000
+snapshot_save_iter: 5000
+
+
+###############################
+## optimizer
+#-----------------
+scheduler:
+  lr_policy: multistep
+  step_size: 10000
