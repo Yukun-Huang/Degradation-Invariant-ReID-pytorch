@@ -1,6 +1,7 @@
 # Degradation-Invariant-Re-ID-pytorch
 This is the official code repository for *Learning Degradation-Invariant Representation for Robust Real-World Person Re-Identification*.
 
+The training code will be released soon.
 
 ## Dataset
 Download the MLR-CUHK03 dataset and reorganize the folders as follows:<br>
@@ -25,7 +26,10 @@ Trained model are provided. You may download it from [Google Drive](https://driv
 
 ## Usage
 ```
-python3  test_reid.py
+python  test_reid.py --dataset mlr_cuhk03 --data_root --data_root path/to/resolution-reid/
 ```
 
 ## Result
+Evaluation on the MLR-CUHK03 dataset:
+
+`Rank@1=91.8  Rank@5=98.6  Rank@10=99.3  Rank@20=99.5  mAP=94.8`
