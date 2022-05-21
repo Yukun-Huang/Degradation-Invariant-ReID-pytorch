@@ -3,8 +3,7 @@ This is the official code repository for *Learning Degradation-Invariant Represe
 
 
 ## Dataset
-
-For example,<br>
+Download the MLR-CUHK03 dataset and reorganize the folders as follows:<br>
 ```
 ├── resolution-reid
 │   ├── MLR-CUHK03
@@ -14,6 +13,7 @@ For example,<br>
 │       ├── query
 │           ├── 0020
 │               ├── 00020_c0_00000.jpg
+│               ├── ...
 ```
 
 ## Model
