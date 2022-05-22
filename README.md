@@ -26,7 +26,7 @@ Trained model are provided. You may download it from [Google Drive](https://driv
 
 ## Usage
 ```
-python  test_reid.py --dataset mlr_cuhk03 --data_root --data_root path/to/resolution-reid/
+python  test_reid.py --dataset mlr_cuhk03 --data_root path/to/resolution-reid/
 ```
 
 ## Result
