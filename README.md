@@ -25,26 +25,27 @@ Trained model are provided. You may download it from [Google Drive](https://driv
 * PyTorch 1.8
 
 ## Usage
-### Re-ID Performance
-Evaluation on the MLR-CUHK03 dataset:
+### 1. Re-ID Performance
+**Command (Evaluation on the MLR-CUHK03 dataset):**
 
 ```
 python test_reid.py --dataset mlr_cuhk03 --data_root path/to/resolution-reid/
 ```
 
-Results:
+**Results:**
 
 `Rank@1=91.8  Rank@5=98.6  Rank@10=99.3  Rank@20=99.5  mAP=94.8`
 
-### Visualization
-
+### 2. Visualization
+**Command:**
 ```
-python visualize.py --dataset mlr_cuhk03
+python visualize.py
 ```
 
-Visualization of degradation swapping:
+**Visualization results of Degradation Swapping:**
 
-![viz_swap](./demo/viz_swap.jpg)
+<img src="https://github.com/hyk1996/Degradation-Invariant-Re-ID-pytorch/blob/main/demo/viz_swap.jpg" width="300px">
 
-Visualization of degradation memory replay:
-![viz_replay](./demo/viz_replay.jpg)
+**Visualization results of Degradation Memory Replay:**
+
+<img src="https://github.com/hyk1996/Degradation-Invariant-Re-ID-pytorch/blob/main/demo/viz_replay.jpg" width="500px">
