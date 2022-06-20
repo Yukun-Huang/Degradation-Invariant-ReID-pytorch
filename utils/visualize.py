@@ -2,13 +2,12 @@
 import os
 import re
 import torch
-from torch.nn import functional as F
+from torch.nn import functional
+from PIL import Image
 import numpy as np
 from torchvision.utils import save_image, make_grid
-import matplotlib
 from matplotlib import pyplot as plt
 from .image import to_recover
-matplotlib.use('agg')
 
 
 def write_loss(iterations, trainer, train_writer):
@@ -45,7 +44,7 @@ def write_loss_by_str(iterations, loss_info, train_writer):
         train_writer.add_scalar(name, float(value), iterations)
 
 
-def write_images(image_outputs, image_directory, file_name, max_display_size=None, recover=True):
+def write_images(image_outputs, image_directory, file_name=None, max_display_size=None, recover=True):
     if max_display_size is None:
         display_size = image_outputs[0].size(0)
     else:
@@ -56,7 +55,8 @@ def write_images(image_outputs, image_directory, file_name, max_display_size=Non
         image_grid = make_grid(to_recover(image_tensor), nrow=display_size, padding=0, normalize=False)
     else:
         image_grid = make_grid(image_tensor, nrow=display_size, padding=0, normalize=True, scale_each=True)
-    save_image(image_grid, os.path.join(image_directory, file_name), nrow=1)
+    save_path = image_directory if file_name is None else os.path.join(image_directory, file_name)
+    save_image(image_grid, save_path, nrow=1)
 
 
 def get_display_images(loader, display_size):
@@ -105,11 +105,11 @@ class LossVisualizer:
 
 
 class FeatureVisualizer:
-    def __init__(self, size=(256, 128), cmap_type='jet', reduce_type='sum', interpolate_mode='bilinear'):
-        self.color_map = plt.get_cmap(cmap_type)
-        self.reduce_type = reduce_type
+    def __init__(self, size=(256, 128), norm='spatial', color_map='jet', interpolate='bilinear'):
+        self.color_map = plt.get_cmap(color_map)
+        self.norm = norm
         self.size = size
-        self.interpolate_mode = interpolate_mode
+        self.interpolate = interpolate
         self.height = size[0]
         self.width = size[1]
         self.mean = np.array([0.485, 0.456, 0.406])
@@ -120,16 +120,15 @@ class FeatureVisualizer:
     @staticmethod
     def _check_dimension(x):
         assert x.dim() == 3 or x.dim() == 4, 'Input should be 3D or 4D tensor.'
-    
-    @staticmethod
-    def _normalize(x, mode='spatial', p=2):
+
+    def _normalize(self, x, p=2):
         assert x.size(0) == 1
-        if mode == 'minmax':
+        if self.norm == 'minmax':
             max_val, min_val = torch.max(x), torch.min(x)
             x = (x - min_val) / (max_val - min_val)
-        elif mode == 'spatial':
+        elif self.norm == 'spatial':
             x = x.div(torch.norm(x.flatten(), p=p, dim=0))
-        elif mode == 'abs':
+        elif self.norm == 'abs':
             x = torch.abs(x)
         return x
 
@@ -151,46 +150,56 @@ class FeatureVisualizer:
         """
         # reduce by batch, choose the first sample
         x = x[0].unsqueeze(dim=0) if x.dim() == 4 else x.unsqueeze(dim=0)
-        x = F.interpolate(x, size=self.size, mode=self.interpolate_mode, align_corners=False)
+        x = functional.interpolate(x, size=self.size, mode=self.interpolate, align_corners=False)
         x = x.squeeze(dim=0).detach().cpu().numpy().transpose((1, 2, 0))
         return self._recover_numpy(x) if recover else x
 
-    def _transform_feature(self, f):
+    def _transform_feature(self, f, reduce_type='sum'):
         """
         Transform feature from torch.tensor to numpy.array.
         """
         # reduce by batch, choose the first sample
         f = f[0].unsqueeze(dim=0) if f.dim() == 4 else f.unsqueeze(dim=0)
-        f = F.interpolate(f, size=self.size, mode=self.interpolate_mode, align_corners=False)
-        if self.reduce_type == 'mean':
+        f = functional.interpolate(f, size=self.size, mode=self.interpolate, align_corners=False)
+        if reduce_type == 'mean':
             f = f.mean(dim=1, keepdim=True)  # reduce by channel
-        elif self.reduce_type == 'sum':
+        elif reduce_type == 'sum':
             f = f.sum(dim=1, keepdim=True)  # reduce by channel
         f = self._normalize(f)
         return f.squeeze().detach().cpu().numpy()
 
-    def _draw(self, x, ca):
-        plt.xticks([])  # 去掉x轴
-        plt.yticks([])  # 去掉y轴
-        plt.axis('off')  # 去掉坐标轴
-        ca.imshow(x, cmap=self.color_map)
+    def _draw(self, x, ca, color_map):
+        plt.xticks([])
+        plt.yticks([])
+        plt.axis('off')
+        cmp = color_map if color_map is not None else self.color_map
+        ca.imshow(x, cmap=cmp)
 
-    def save_feature(self, f, save_path, show=False):
+    def save_feature(self, f, save_path, color_map=None, show=False):
         self._check_dimension(f)
         f = self._transform_feature(f.cpu())
-        self._draw(f, plt.gca())
+        self._draw(f, plt.gca(), color_map)
         plt.savefig(save_path, bbox_inches='tight', pad_inches=0.0)
         if show:
             plt.show()
         plt.close()
 
-    def save_image(self, img, save_path, n_row=8, recover=False):
+    def save_image(self, img, save_path, n_row=8, recover=True):
         self._check_dimension(img)
         if recover:
             img = self._recover_torch(img)
         save_image(img, save_path, nrow=n_row)
 
-    def save_both(self, img, f, save_path, recover=False, show=False):
+    @staticmethod
+    def save_mixed_image(img_path, feat_path, save_path, alpha=0.5, beta=None):
+        if beta is None:
+            beta = 1 - alpha
+        img1 = Image.open(img_path).convert('RGB')
+        img2 = Image.open(feat_path).convert('RGB').resize(img1.size)
+        img_mix = np.array(img1) * alpha + np.array(img2) * beta
+        Image.fromarray(img_mix.clip(0.0, 255.0).astype(np.uint8)).save(save_path)
+
+    def save_both(self, img, f, save_path, recover=True, show=False):
         fig = plt.figure()
         ax0 = fig.add_subplot(121, title="image")
         ax1 = fig.add_subplot(122, title="feature")

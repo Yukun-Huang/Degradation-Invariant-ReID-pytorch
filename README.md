@@ -25,11 +25,26 @@ Trained model are provided. You may download it from [Google Drive](https://driv
 * PyTorch 1.8
 
 ## Usage
-```
-python  test_reid.py --dataset mlr_cuhk03 --data_root path/to/resolution-reid/
-```
-
-## Result
+### Re-ID Performance
 Evaluation on the MLR-CUHK03 dataset:
 
+```
+python test_reid.py --dataset mlr_cuhk03 --data_root path/to/resolution-reid/
+```
+
+Results:
+
 `Rank@1=91.8  Rank@5=98.6  Rank@10=99.3  Rank@20=99.5  mAP=94.8`
+
+### Visualization
+
+```
+python visualize.py --dataset mlr_cuhk03
+```
+
+Visualization of degradation swapping:
+
+![viz_swap](./demo/viz_swap.jpg)
+
+Visualization of degradation memory replay:
+![viz_replay](./demo/viz_replay.jpg)

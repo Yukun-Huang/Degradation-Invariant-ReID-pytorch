@@ -61,6 +61,17 @@ class _Trainer(nn.Module):
         super(_Trainer, self).__init__()
         self.resume_iteration = 0
 
+    @staticmethod
+    def update(loss, optimizer, scaler=None):
+        optimizer.zero_grad()
+        if scaler is None:
+            loss.backward()
+            optimizer.step()
+        else:
+            scaler.scale(loss).backward()
+            scaler.step(optimizer)
+            scaler.update()
+
     def update_learning_rate(self):
         if hasattr(self, 'dis_scheduler'):
             self.dis_scheduler.step()

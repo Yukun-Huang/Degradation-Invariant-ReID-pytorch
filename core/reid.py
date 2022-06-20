@@ -6,7 +6,7 @@ from core.base import _Trainer
 from core.network import *
 from core.network.reid.memory import MemoryBank
 from core.network.reid.attention import GuidedReIDAttention
-from core.loss.scheduler import get_scheduler
+from core.scheduler import get_scheduler
 
 
 class DualReIDTrainer(_Trainer):
@@ -188,8 +188,6 @@ class ReIDTrainer(DualReIDTrainer):
 
 
 class Augmenter(_Trainer):
-    from utils.distance import euclidean_dist
-
     def __init__(self, config):
         super(Augmenter, self).__init__()
         self.config = deepcopy(config)
@@ -199,44 +197,41 @@ class Augmenter(_Trainer):
         self.G = build_generator(config).eval()
         self.bank = None
 
-    def initialize(self, loader):
-        if isinstance(loader, str):
-            self.bank = MemoryBank(torch.load(loader, map_location='cuda'))
+    def initialize(self, data_source):
+        if isinstance(data_source, str):
+            self.bank = MemoryBank(torch.load(data_source, map_location='cuda'))
         else:
-            self.bank = MemoryBank(loader, self.E_deg)
+            self.bank = MemoryBank(data_source, self.E_deg)
 
-    def augment(self, x, label, config, step=1):
+    @torch.no_grad()
+    def augment(self, x, aug_mode, step):
         c = self.E_con.content(x)
         n, nch, h, w = c.size()
-        if config['aug_mode'] == 'bank':
+        if aug_mode == 'bank':
             c = c.unsqueeze(1).expand(n, step, nch, h, w).reshape((n*step, nch, h, w))
             d = self.bank.get_a_batch(n*step).reshape((n*step, -1))
-        elif config['aug_mode'] == 'shuffle':
+        elif aug_mode == 'shuffle':
             d = self.E_deg(x)
             d = d[torch.randperm(x.size(0))]
-        elif config['aug_mode'] == 'shuffle_hard':
-            d = self.E_deg(x)
-            d = d[torch.max(self.euclidean_dist(d, d), dim=1)[1]]
         else:
-            assert 0
-        x_aug = self.G(c, d)
-        l_aug = label.unsqueeze(1).expand(n, step).reshape((n*step))
-        return x_aug, l_aug
+            raise NotImplementedError
+        return self.G(c, d)
 
+    @torch.no_grad()
     def forward(self, x, label, config, step=1):
-        return self.augment(x, label, config, step)
+        x_aug = self.augment(x, config['aug_mode'], step)
+        l_aug = label.unsqueeze(1).expand(x.size(0), step).flatten()
+        return x_aug, l_aug
 
     @staticmethod
     def mix(x, x_aug, prob=0.5):
         for i in range(x.size(0)):
             if random.random() > prob:
-                temp = x[i].clone()
-                x[i] = x_aug[i]
-                x_aug[i] = temp
+                x[i], x_aug[i] = x_aug[i], x[i]
         return x, x_aug
 
     def resume(self, checkpoint_dir):
-        self.resume_one(checkpoint_dir, name='E_con', n_split=2)
+        self.resume_one(checkpoint_dir, name='E_con')
         self.resume_one(checkpoint_dir, name='E_deg')
         self.resume_one(checkpoint_dir, name='G')
 
