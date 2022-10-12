@@ -1,5 +1,5 @@
 # Degradation-Invariant-Re-ID-pytorch
-This is the official code repository for *Learning Degradation-Invariant Representation for Robust Real-World Person Re-Identification*.
+This is the official code for IJCV 2022 paper "[*Learning Degradation-Invariant Representation for Robust Real-World Person Re-Identification*](https://link.springer.com/article/10.1007/s11263-022-01666-w)".
 
 The training code will be released soon.
 
@@ -49,3 +49,18 @@ python visualize.py
 **Visualization results of Degradation Memory Replay:**
 
 <img src="https://github.com/hyk1996/Degradation-Invariant-Re-ID-pytorch/blob/main/demo/viz_replay.jpg" width="500px">
+
+## Citation
+If you find the code useful, please kindly cite this paper:
+```
+@article{huang2022learning,
+  title={Learning Degradation-Invariant Representation for Robust Real-World Person Re-Identification},
+  author={Huang, Yukun and Fu, Xueyang and Li, Liang and Zha, Zheng-Jun},
+  journal={International Journal of Computer Vision},
+  volume={130},
+  number={11},
+  pages={2770--2796},
+  year={2022},
+  publisher={Springer}
+}
+```
