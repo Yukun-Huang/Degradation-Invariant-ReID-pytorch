@@ -52,7 +52,7 @@ python visualize.py
 
 ## Citation
 If you find the code useful, please kindly cite this paper:
-```
+```BibTeX
 @article{huang2022learning,
   title={Learning Degradation-Invariant Representation for Robust Real-World Person Re-Identification},
   author={Huang, Yukun and Fu, Xueyang and Li, Liang and Zha, Zheng-Jun},
