@@ -33,6 +33,8 @@ Download the MLR-CUHK03 dataset and reorganize the folders as follows:<br>
 │               ├── ...
 ```
 
+To construct the cross-resolution MLR-CUHK03, MLR-VIPeR, and CAVIAR benchmarks, you may follow the AAAI 2018 paper ["Deep Low-Resolution Person Re-Identification"](https://ojs.aaai.org/index.php/AAAI/article/view/12284) and use the split protocol files provided in `data_splits/` from [Google Drive](https://drive.google.com/drive/folders/1anHkFyEJaQWRsbkmVFjZX9y71zzb7rCs?usp=sharing).
+
 ## Model
 Trained model are provided. You may download it from [Google Drive](https://drive.google.com/drive/folders/1anHkFyEJaQWRsbkmVFjZX9y71zzb7rCs?usp=sharing), then move the `outputs` folder to your project's root directory.
 
