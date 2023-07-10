@@ -13,7 +13,7 @@ Sciences
 We propose a real-world Degradation Invariance Learning (DIL)
 framework, which can utilize training image pairs with different supervision types for content-degradation feature disentanglement. Using DIL as a proxy task can facilitate both low- and high-level downstream tasks such as person re-identification and low-light image enhancement.
 
-<img src="./assets/teaser.png" width="700px">
+<img src="./assets/teaser.png" width="100%">
 
 
 ## Dependencies
