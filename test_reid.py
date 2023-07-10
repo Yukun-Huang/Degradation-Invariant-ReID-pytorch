@@ -1,7 +1,7 @@
 import os
 import torch
 import torch.backends.cudnn as cudnn
-from core import build_reid_trainer
+from core.reid import ReIDTrainer
 from core.data import ReidDataset
 from core.reid_eval import Tester
 from config import Config
@@ -16,8 +16,8 @@ if __name__ == '__main__':
     num_gpu = torch.cuda.device_count()
     print('Now you are using %d GPUs.' % num_gpu)
 
-    trainer = build_reid_trainer(config).eval().cuda()
-    trainer.resume(os.path.join(opts.output_root, 'checkpoints'))
+    trainer = ReIDTrainer(config).eval().cuda()
+    trainer.resume(os.path.join(opts.output_path, 'checkpoints'))
 
     reid_dataset = ReidDataset(config)
     if opts.testset in ['hazy', 'haze'] or opts.degrade_type in ['hazy', 'haze']:

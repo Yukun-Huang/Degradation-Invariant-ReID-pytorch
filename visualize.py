@@ -4,7 +4,8 @@ import os.path as osp
 from tqdm import tqdm
 from config import Config
 from functools import partial
-from core import build_dil_trainer, Augmenter
+from core.dil import DILTrainer
+from core.reid import Augmenter
 from utils.image import load_image_as_tensor
 from utils.visualize import write_images
 
@@ -33,25 +34,29 @@ def visualization_via_memory_replay(input_path, output_path, step=8):
 if __name__ == '__main__':
     # Setup Config
     opts, config = Config().parse(config_name='config_dil.yml')
+    os.makedirs(osp.join(opts.output_path, 'results'))
+
+    model_directory = osp.join(opts.output_path, 'checkpoints', 'DIL_trained')
+    result_directory = osp.join(opts.output_path, 'results')
 
     # Visualization - Degradation Swapping
-    trainer = build_dil_trainer(config).eval().cuda()
-    trainer.resume(os.path.join(opts.output_root, 'checkpoints', 'DIL_trained'))
+    trainer = DILTrainer(config).eval().cuda()
+    trainer.resume(model_directory)
     visualization_via_swapping(
-        './demo/img_hr.jpg',
-        './demo/img_lr.jpg',
-        './demo/',
+        './assets/img_hr.jpg',
+        './assets/img_lr.jpg',
+        result_directory,
     )
 
     # Visualization - Degradation Memory Replay
     augmenter = Augmenter(config).eval().cuda()
-    augmenter.resume(os.path.join(opts.output_root, 'checkpoints', 'DIL_trained'))
-    augmenter.initialize(os.path.join(opts.output_root, 'checkpoints', 'DIL_trained', 'deg_memories.pt'))
+    augmenter.resume(model_directory)
+    augmenter.initialize(osp.join(model_directory, 'deg_memories.pt'))
     visualization_via_memory_replay(
-        './demo/img_hr.jpg',
-        './demo/img_hr_aug.jpg',
+        './assets/img_hr.jpg',
+        osp.join(result_directory, 'img_hr_aug.jpg'),
     )
     visualization_via_memory_replay(
-        './demo/img_lr.jpg',
-        './demo/img_lr_aug.jpg',
+        './assets/img_lr.jpg',
+        osp.join(result_directory, 'img_lr_aug.jpg'),
     )

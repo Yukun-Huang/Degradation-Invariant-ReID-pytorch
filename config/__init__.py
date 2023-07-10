@@ -41,6 +41,10 @@ class Config:
         parser.add_argument('--data_root', default='./data/resolution-reid/', type=str, help='dataset')
         parser.add_argument('--output_root', type=str, default='./outputs/', help="outputs path")
         parser.add_argument("--teacher_root", type=str, default=None, help="teacher path")
+
+        parser.add_argument('--output_path', type=str, default=None, help="output path")
+        parser.add_argument("--resume_path", type=str, default=None, help="resume path")
+
         self.parser = parser
 
     def general_init(self):
@@ -108,9 +112,10 @@ class Config:
     @staticmethod
     def special_options(opt):
         opt.num_class = dataset_info[opt.dataset][1]
-        opt.data_root = os.path.join(opt.data_root, dataset_info[opt.dataset][0])
-        opt.output_root = os.path.join(opt.output_root, opt.dataset)
         opt.name = opt.dataset if opt.name is None else '{}_{}'.format(opt.dataset, opt.name)
+        opt.data_root = os.path.join(opt.data_root, dataset_info[opt.dataset][0])
+        opt.output_path = osp.join(opt.output_root, opt.name) if not opt.output_path else opt.output_path
+        opt.resume_path = osp.join(opt.output_root, opt.name) if not opt.resume_path else opt.resume_path
         if '_dil' in opt.config_name:
             if opt.folder_type == 'auto':
                 opt.folder_type = 'un_triplet' if opt.dataset in UNPAIRED_DATASETS else 'semi_triplet'

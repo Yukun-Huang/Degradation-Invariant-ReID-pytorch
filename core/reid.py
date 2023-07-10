@@ -136,11 +136,11 @@ class DualReIDTrainer(_Trainer):
         if self.use_attention:
             self.save_one(snapshot_dir, iterations, name='A_deg')
 
-    def resume(self, checkpoint_dir, resume_DIL=False):
+    def resume(self, checkpoint_dir, DIL_only=False):
         self.resume_one(checkpoint_dir, name='E_con')
         if self.use_attention:
             self.resume_one(checkpoint_dir, name='E_deg')
-        if not resume_DIL:
+        if not DIL_only:
             self.resume_one(checkpoint_dir, name='E_id')
             self.resume_one(checkpoint_dir, name='C')
             if self.use_attention:

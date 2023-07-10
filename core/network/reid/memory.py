@@ -23,6 +23,7 @@ class MemoryBank(object):
     def extract_features(self, loader, encoder):
         features, cnt = None, 0
         with torch.no_grad():
+            print('Building degradation memory bank...')
             for one_batch in tqdm(loader):
                 if len(one_batch) == 2 or len(one_batch) == 3:
                     img = one_batch[0]

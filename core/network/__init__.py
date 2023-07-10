@@ -23,27 +23,25 @@ def build_degradation_encoder(config):
     return DegradationEncoder(config)
 
 
-def build_content_encoder(config, resume_teacher=False, remove_classifier=True):
+def build_content_encoder(config, remove_classifier=True):
     # Build Content Encoder
     net = ContentEncoder(config, **BACKBONE_PARAMS['base'])
     # Resume weights
-    if resume_teacher:
+    if config['teacher_root'] is not None:
         teacher_directory = os.path.join(config['teacher_root'], config['dataset'])
-        state_dict = load_teacher_weights(teacher_directory, file_name='net_last.pth',
-                                          remove_classifier=remove_classifier)
+        state_dict = load_teacher_weights(teacher_directory, file_name='net_last.pth', remove_classifier=remove_classifier)
         net.load_state_dict(state_dict, strict=False)
         print(f'Resume weights from {teacher_directory} to E_con, remove_classifier={remove_classifier}')
     return net
 
 
-def build_identity_encoder(config, resume_teacher=False, remove_classifier=False):
+def build_identity_encoder(config, remove_classifier=False):
     # Build Identity Encoder
     net = IdentityEncoder(config['num_class'], **BACKBONE_PARAMS['base'])
     # Resume weights
-    if resume_teacher:
+    if config['teacher_root'] is not None:
         teacher_directory = os.path.join(config['teacher_root'], config['dataset'])
-        state_dict = load_teacher_weights(teacher_directory, file_name='net_last.pth', n_split=None,
-                                          remove_classifier=remove_classifier)
+        state_dict = load_teacher_weights(teacher_directory, file_name='net_last.pth', n_split=None, remove_classifier=remove_classifier)
         net.load_state_dict(state_dict, strict=False)
         print('Resume weights from {} to E_id, remove_classifier={}'.format(teacher_directory, remove_classifier))
     return net
