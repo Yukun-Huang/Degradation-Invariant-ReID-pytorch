@@ -2,8 +2,7 @@
 This repository contains the official implementation of the [IJCV 2022 paper](https://link.springer.com/article/10.1007/s11263-022-01666-w):
 > Learning Degradation-Invariant Representation for Robust Real-World Person Re-Identification
 <br>Yukun Huang<sup>1</sup>, [Xueyang Fu](https://xueyangfu.github.io/)<sup>1</sup>, Liang Li<sup>2</sup>, Zheng-Jun Zha<sup>1</sup><br>
-> <sup>1</sup>University of Science and Technology of China &nbsp; <sup>2</sup>Institute of Computing Technology, Chinese Academy of
-Sciences
+> <sup>1</sup>University of Science and Technology of China &nbsp; <sup>2</sup>Institute of Computing Technology, Chinese Academy of Sciences
 
 
  <!-- "[*Learning Degradation-Invariant Representation for Robust Real-World Person Re-Identification*](https://link.springer.com/article/10.1007/s11263-022-01666-w)". -->
